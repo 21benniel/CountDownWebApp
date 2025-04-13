@@ -1,0 +1,622 @@
+/* --- Base & Common Styles --- */
+body {
+    margin: 0;
+    font-family: sans-serif; /* Default clean font */
+    color: #eee;
+    background-color: #1a1a1a; /* Dark background for landing page */
+}
+
+a {
+    color: #8af;
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+
+h2, h3 {
+    color: #ddd;
+    border-bottom: 1px solid #444;
+    padding-bottom: 5px;
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+/* --- Landing Page Styles --- */
+.landing-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 280px; /* Slightly wider */
+    padding: 20px;
+    border-right: 1px solid #444;
+    background-color: #222;
+    flex-shrink: 0; /* Prevent sidebar from shrinking */
+}
+
+.sidebar h3 {
+    font-size: 1.2em;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 0.9em;
+    color: #bbb;
+}
+
+.form-group input[type="text"],
+.form-group input[type="datetime-local"],
+.form-group input[type="file"] {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+    background-color: #333;
+    border: 1px solid #555;
+    color: #eee;
+    border-radius: 3px;
+    font-size: 0.9em;
+}
+
+/* Style file input button */
+.form-group input[type="file"]::file-selector-button {
+    padding: 6px 10px;
+    background-color: #555;
+    color: #eee;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+.form-group input[type="file"]::file-selector-button:hover {
+    background-color: #666;
+}
+
+
+.form-group button {
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 1em;
+    transition: background-color 0.3s;
+}
+
+.form-group button:hover {
+    background-color: #0056b3;
+}
+
+.main-content {
+    flex-grow: 1;
+    padding: 20px;
+}
+
+.main-content h2 {
+    font-size: 1.5em;
+}
+
+.timer-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Fixed 3 columns */
+    gap: 20px;
+}
+
+.timer-box {
+    border: 1px solid #444;
+    padding: 25px 20px;
+    text-align: center;
+    background-color: #282828; /* Default background for boxes */
+    border-radius: 5px;
+    text-decoration: none;
+    color: #eee;
+    transition: background-color 0.3s, transform 0.2s;
+    display: block; /* Make the whole box clickable */
+    font-size: 1.1em;
+    display: flex; /* Use flexbox for layout */
+    flex-direction: column; /* Stack name and preview vertically */
+    justify-content: space-between; /* Space out content */
+    min-height: 100px; /* Give some minimum height */
+    position: relative; /* Needed for absolute positioning of animations */
+    overflow: hidden; /* Clip animations within the box */
+}
+
+.timer-box:hover {
+    background-color: #383838; /* Default hover */
+    transform: translateY(-3px);
+    text-decoration: none;
+    color: #eee; /* Default text color */
+}
+
+.timer-box-name {
+    font-weight: bold;
+    margin-bottom: 10px; /* Space below name */
+    /* Ensure name is readable on themes */
+    color: inherit; /* Inherit from .timer-box */
+    /* text-shadow: 0 0 3px rgba(0, 0, 0, 0.5); Removed default shadow */
+    position: relative; /* Ensure content is layerable */
+    z-index: 2; /* Keep content above animations */
+}
+
+.preview-countdown {
+    font-size: 0.9em;
+    color: #bbb; /* Default preview text color */
+    opacity: 1.0;
+    /* text-shadow: 0 0 3px rgba(0, 0, 0, 0.5); Removed default shadow */
+}
+
+.preview-countdown span {
+    font-weight: bold;
+    color: #ddd; /* Default preview digit color */
+    margin: 0 2px; /* Small spacing around numbers */
+    opacity: 1.0;
+    font-family: 'Orbitron', sans-serif; /* Use digital font for previews */
+}
+
+
+/* --- Timer Display Page Styles --- */
+
+/* Apply display-specific styles to a wrapper or body class */
+.timer-display-page { /* Renamed class */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    overflow: hidden; /* Hide overflow for snow effect */
+    position: relative; /* Needed for absolute positioning of snowflakes */
+    min-height: 100vh; /* Ensure full height */
+    padding: 20px; /* Add padding */
+    box-sizing: border-box;
+}
+
+.countdown-wrapper {
+    position: relative; /* Ensure countdown text is above snowflakes */
+    z-index: 10;
+    background-color: rgba(0, 0, 0, 0.3); /* Optional semi-transparent background */
+    padding: 30px;
+    border-radius: 10px;
+}
+
+.timer-display-page .intro-text, /* Renamed class */
+.timer-display-page .outro-text { /* Renamed class */
+    font-size: 2.5em; /* Increased size */
+    margin: 15px 0; /* Adjusted margin */
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8); /* Enhanced glow */
+}
+
+.timer-display-page .countdown-digits { /* Renamed class */
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+    gap: 25px; /* Increased gap */
+    margin: 30px 0; /* Increased margin */
+}
+
+.timer-display-page .time-unit { /* Renamed class */
+    display: inline-flex;
+    align-items: baseline;
+    gap: 5px;
+}
+
+.timer-display-page .time-unit span { /* Renamed class */
+    font-size: 6em; /* Significantly increased size */
+    font-weight: bold;
+    color: #f0f0f0;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.9); /* Enhanced glow */
+    line-height: 1;
+}
+
+.timer-display-page .time-unit label { /* Renamed class */
+    font-size: 2em; /* Increased size */
+    color: #d0d0d0;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.6); /* Enhanced glow */
+    padding-top: 15px; /* Adjusted alignment */
+}
+
+.timer-display-page .back-link { /* Renamed class */
+    margin-top: 30px;
+    font-size: 1em;
+}
+
+.timer-display-page .back-link a { /* Renamed class */
+    color: #ccc;
+    text-shadow: 0 0 3px rgba(255, 255, 255, 0.4);
+}
+.timer-display-page .back-link a:hover { /* Renamed class */
+    color: #fff;
+}
+
+
+/* --- Themes for Timer Display Page --- */
+
+/* Default/Fallback Theme (if no class or image) */
+.timer-display-page { /* Renamed class */
+    background: linear-gradient(to bottom, #333, #111);
+    font-family: sans-serif; /* Default font */
+}
+
+/* Christmas Theme */
+/* Apply theme to both display page body and landing page box */
+/* Base styles for themed boxes - More modern look */
+.timer-box[class*="theme-"] {
+    background-color: #222; /* Slightly lighter dark base */
+    border: 1px solid #444; /* Less prominent border */
+    color: #ccc; /* Default text color */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+.timer-box[class*="theme-"]:hover {
+    border-color: #666; /* Subtle hover border change */
+    background-color: #282828; /* Subtle hover background change */
+}
+.timer-box[class*="theme-"] .timer-box-name {
+    color: #eee; /* Brighter name */
+    font-weight: 600;
+    text-shadow: none;
+    font-size: 1em; /* Slightly smaller name */
+}
+.timer-box[class*="theme-"] .preview-countdown {
+    color: #999; /* Dimmer label text */
+    text-shadow: none;
+    font-size: 1.1em; /* Make preview digits slightly larger */
+    margin-top: 5px; /* Add space above preview */
+}
+.timer-box[class*="theme-"] .preview-countdown span {
+    color: #eee; /* Brighter digits */
+    font-family: 'Orbitron', sans-serif; /* Digital font */
+    text-shadow: none;
+    letter-spacing: 1px; /* Add spacing to digits */
+}
+
+/* --- Landing Page Box Themes (Simplified) --- */
+
+/* Christmas Theme Box */
+.timer-display-page.theme-christmas { font-family: 'MedievalSharp', cursive; background: radial-gradient(ellipse at bottom, #3d0000 0%, #1a0000 100%); color: #fff; text-shadow: 0 0 5px rgba(255, 255, 255, 0.5); }
+.timer-box.theme-christmas { background-color: #3a1a1a; border-color: #6a3a3a; }
+.timer-box.theme-christmas .preview-countdown span { color: #ffcccc; }
+.timer-display-page.theme-christmas .snowflakes,
+.timer-box.theme-christmas .snowflakes-preview { display: block; } /* Show on display page AND preview box */
+
+/* New Year Theme */
+/* New Year Theme Box */
+.timer-display-page.theme-newyear { font-family: 'Orbitron', sans-serif; background: radial-gradient(circle at top left, #000020, #000050, #000000 90%); color: #eee; }
+.timer-box.theme-newyear { background-color: #1a1a3a; border-color: #4a4a7a; }
+.timer-display-page.theme-newyear .time-unit span { color: #0ff; text-shadow: 0 0 15px #0ff; }
+.timer-box.theme-newyear .preview-countdown span { color: #0ff; }
+.timer-display-page.theme-newyear .snowflakes, /* No snow for NY */
+.timer-display-page.theme-newyear .fireworks { display: block; } /* Show fireworks on display page */
+.timer-box.theme-newyear .fireworks-preview { display: block; } /* Show fireworks in preview box */
+
+/* Diwali Theme */
+/* Diwali Theme Box */
+.timer-display-page.theme-diwali { font-family: 'Hind', sans-serif; background: linear-gradient(135deg, #ff4500 0%, #ff8c00 50%, #ffd700 100%); color: #fff; }
+.timer-box.theme-diwali { background-color: #4d2000; border-color: #b36200; }
+.timer-display-page.theme-diwali .time-unit span { color: #fff; text-shadow: 0 0 8px #ffffe0; }
+.timer-box.theme-diwali .preview-countdown span { color: #ffffe0; }
+.timer-display-page.theme-diwali .snowflakes { display: none; }
+
+/* Monday Theme */
+/* Monday Theme Box */
+.timer-display-page.theme-monday { font-family: 'Arial', sans-serif; background: linear-gradient(to top, #2d3748, #4a5568 70%, #718096 100%); color: #cbd5e0; }
+.timer-box.theme-monday { background-color: #3a4a5a; border-color: #5a6a7a; }
+.timer-display-page.theme-monday .time-unit span { color: #e2e8f0; text-shadow: 0 0 5px rgba(200, 200, 255, 0.5); }
+.timer-box.theme-monday .preview-countdown span { color: #e2e8f0; }
+.timer-display-page.theme-monday .snowflakes { display: none; }
+
+/* Weekend Theme */
+/* Weekend Theme Box */
+.timer-display-page.theme-weekend { font-family: 'Verdana', sans-serif; background: radial-gradient(ellipse at top right, #a7f3d0, #34d399 50%, #10b981 100%); color: #065f46; }
+.timer-box.theme-weekend { background-color: #1a4a3a; border-color: #2a7a5a; }
+.timer-display-page.theme-weekend .time-unit span { color: #fff; text-shadow: 0 0 8px #a7f3d0; }
+.timer-box.theme-weekend .preview-countdown span { color: #f0fdf4; } /* Light text */
+.timer-box.theme-weekend .timer-box-name { color: #f0fdf4; }
+.timer-display-page.theme-weekend .snowflakes { display: none; }
+
+/* Month End Theme */
+/* Month End Theme Box */
+.timer-display-page.theme-monthend { font-family: 'Georgia', serif; background: linear-gradient(45deg, #5b10b9, #7b34d3, #a78bfa); color: #f0e6ff; }
+.timer-box.theme-monthend { background-color: #4a1a7a; border-color: #6a3aaf; }
+.timer-display-page.theme-monthend .time-unit span { color: #fff; text-shadow: 0 0 10px #e9d5ff; }
+.timer-box.theme-monthend .preview-countdown span { color: #e9d5ff; }
+.timer-display-page.theme-monthend .snowflakes { display: none; }
+
+/* Halloween Theme */
+/* Halloween Theme Box */
+.timer-display-page.theme-halloween { font-family: 'Creepster', cursive; background: linear-gradient(to bottom, #1a1a1a, #4a0404, #ff6600); color: #ffcc99; }
+.timer-box.theme-halloween { background-color: #4a0404; border-color: #993d00; }
+.timer-display-page.theme-halloween .time-unit span { color: #ff6600; text-shadow: 0 0 10px #ff6600, 0 0 20px #fff; }
+.timer-box.theme-halloween .preview-countdown span { color: #ff6600; }
+.timer-display-page.theme-halloween .snowflakes { display: none; }
+
+/* Black Friday Theme */
+/* Black Friday Theme Box */
+.timer-display-page.theme-blackfriday { font-family: 'Impact', sans-serif; background: linear-gradient(135deg, #000000 0%, #222222 50%, #444444 100%); color: #fff; }
+.timer-box.theme-blackfriday { background-color: #111; border-color: #444; }
+.timer-display-page.theme-blackfriday .time-unit span { color: #fff; text-shadow: 0 0 8px #aaa; }
+.timer-box.theme-blackfriday .preview-countdown span { color: #eee; }
+.timer-display-page.theme-blackfriday .snowflakes { display: none; }
+
+/* Valentine's Day Theme */
+/* Valentine's Day Theme Box */
+.timer-display-page.theme-valentines { font-family: 'Dancing Script', cursive; background: linear-gradient(to bottom right, #ffc0cb, #ff69b4, #c71585); color: #fff; }
+.timer-box.theme-valentines { background-color: #8a0f5a; border-color: #c71585; }
+.timer-display-page.theme-valentines .time-unit span { color: #fff; text-shadow: 0 0 10px #ff69b4; }
+.timer-box.theme-valentines .preview-countdown span { color: #ffe0f0; }
+.timer-display-page.theme-valentines .snowflakes { display: none; }
+
+/* Easter Theme */
+/* Easter Theme Box */
+.timer-display-page.theme-easter { font-family: 'Arial Rounded MT Bold', sans-serif; background: linear-gradient(to top left, #f0e6ff, #d8b4fe, #a78bfa); color: #581c87; }
+.timer-box.theme-easter { background-color: #c084fc; border-color: #a78bfa; } /* Adjusted colors */
+.timer-display-page.theme-easter .time-unit span { color: #7e22ce; text-shadow: 0 0 5px #fff; }
+.timer-box.theme-easter .preview-countdown span { color: #9333ea; }
+.timer-box.theme-easter .timer-box-name { color: #581c87; }
+.timer-display-page.theme-easter .snowflakes { display: none; }
+
+/* Mother's Day Theme */
+/* Mother's Day Theme Box */
+.timer-display-page.theme-mothersday { font-family: 'Georgia', serif; background: linear-gradient(to bottom, #fff1f2, #ffe4e6); color: #be185d; border: 1px solid #fecdd3; }
+.timer-box.theme-mothersday { background-color: #ffe4e6; border-color: #fbcfe8; } /* Adjusted colors */
+.timer-display-page.theme-mothersday .time-unit span { color: #db2777; text-shadow: 0 0 5px #fff; }
+.timer-box.theme-mothersday .preview-countdown span { color: #e11d48; }
+.timer-box.theme-mothersday .timer-box-name { color: #be185d; }
+.timer-display-page.theme-mothersday .snowflakes { display: none; }
+
+/* Father's Day Theme */
+/* Father's Day Theme Box */
+.timer-display-page.theme-fathersday { font-family: 'Helvetica Neue', sans-serif; background: linear-gradient(to right, #e0f2fe, #bae6fd); color: #075985; border: 1px solid #7dd3fc; }
+.timer-box.theme-fathersday { background-color: #bae6fd; border-color: #7dd3fc; }
+.timer-display-page.theme-fathersday .time-unit span { color: #0369a1; text-shadow: 0 0 5px #fff; }
+.timer-box.theme-fathersday .preview-countdown span { color: #0ea5e9; }
+.timer-box.theme-fathersday .timer-box-name { color: #075985; }
+.timer-display-page.theme-fathersday .snowflakes { display: none; }
+
+/* Custom Timer Box Theme (Landing Page) */
+.timer-box.theme-custom {
+    background-color: #3a3a3a; /* Neutral dark gray */
+    border-color: #666;
+}
+.timer-box.theme-custom:hover {
+    background-color: #4a4a4a;
+    border-color: #888;
+}
+.timer-box.theme-custom .preview-countdown span {
+    color: #fff; /* White digits for contrast */
+}
+
+/* --- Snow Animation (Common) --- */
+/* Hide by default, activated by theme */
+.snowflakes {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1; /* Behind content */
+}
+/* Adjustments for preview snow */
+.snowflakes-preview .snowflake {
+    font-size: 0.7em; /* Smaller snowflakes */
+    animation-duration: 8s; /* Faster fall */
+}
+.snowflakes-preview .snowflake:nth-of-type(1) { animation-duration: 10s; }
+.snowflakes-preview .snowflake:nth-of-type(2) { animation-duration: 7s; }
+.snowflakes-preview .snowflake:nth-of-type(3) { animation-duration: 9s; }
+
+.snowflake {
+    color: #fff;
+    font-size: 1em;
+    font-family: Arial, sans-serif;
+    position: absolute;
+    top: -10%;
+    opacity: 0;
+    animation: fall linear infinite;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+}
+
+/* --- Fireworks Animation (New Year) --- */
+.fireworks {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 1; /* Behind content */
+}
+
+.spark {
+    position: absolute;
+    width: 3px; /* Smaller sparks */
+    height: 3px;
+    background-color: #fff;
+    border-radius: 50%;
+    opacity: 0;
+    /* Use a new animation name */
+    animation: fireworks-burst 1.2s ease-out infinite;
+}
+/* Adjustments for preview fireworks */
+.fireworks-preview .spark {
+    width: 2px; /* Smaller sparks */
+    height: 2px;
+    /* Reduce travel distance for preview */
+    animation-name: fireworks-burst-preview;
+}
+
+/* New keyframes for outward burst */
+@keyframes fireworks-burst {
+    0% {
+        transform: translate(0, 0) scale(0.5);
+        opacity: 1;
+    }
+    80% {
+        /* Sparks travel outwards */
+        opacity: 1;
+    }
+    100% {
+        /* Sparks fade out far away */
+        transform: translate(var(--tx, 0), var(--ty, 0)) scale(0); /* Use CSS variables for direction */
+        opacity: 0;
+    }
+}
+
+/* Distribute sparks and set their travel direction using CSS variables */
+/* Sparks originate roughly from center */
+.spark:nth-child(1) { top: 50%; left: 50%; animation-delay: 0s; --tx: 0px; --ty: -80px; background-color: #ff0; } /* Up (Yellow) */
+.spark:nth-child(2) { top: 50%; left: 50%; animation-delay: 0.1s; --tx: 60px; --ty: -60px; background-color: #f0f; }
+.spark:nth-child(3) { top: 50%; left: 50%; animation-delay: 0.2s; --tx: 80px; --ty: 0px; background-color: #0ff; }
+.spark:nth-child(4) { top: 50%; left: 50%; animation-delay: 0.3s; --tx: 60px; --ty: 60px; background-color: #f00; }
+.spark:nth-child(5) { top: 50%; left: 50%; animation-delay: 0.4s; --tx: 0px; --ty: 80px; background-color: #0f0; }
+.spark:nth-child(6) { top: 50%; left: 50%; animation-delay: 0.5s; --tx: -60px; --ty: 60px; background-color: #fff; }
+.spark:nth-child(7) { top: 50%; left: 50%; animation-delay: 0.6s; --tx: -80px; --ty: 0px; background-color: #ff0; }
+.spark:nth-child(8) { top: 50%; left: 50%; animation-delay: 0.7s; --tx: -60px; --ty: -60px; background-color: #f0f; }
+.spark:nth-child(9) { top: 50%; left: 50%; animation-delay: 0.8s; --tx: 30px; --ty: -70px; background-color: #0ff; }
+.spark:nth-child(10){ top: 50%; left: 50%; animation-delay: 0.9s; --tx: -30px; --ty: 70px; background-color: #f00; }
+
+/* Keyframes for preview burst (shorter travel distance) */
+@keyframes fireworks-burst-preview {
+    0% { transform: translate(0, 0) scale(0.5); opacity: 1; }
+    80% { opacity: 1; }
+    100% { transform: translate(calc(var(--tx, 0) * 0.4), calc(var(--ty, 0) * 0.4)) scale(0); opacity: 0; }
+}
+
+/* --- Bat Animation (Halloween) --- */
+.bats {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 1; /* Behind content */
+    display: none; /* Hidden by default */
+}
+.timer-display-page.theme-halloween .bats,
+.timer-box.theme-halloween .bats-preview {
+    display: block; /* Show only for halloween theme */
+}
+
+.bat {
+    position: absolute;
+    top: var(--y-offset, 10%); /* Use variable for initial top position */
+    left: -10%; /* Start off screen left */
+    font-size: 2em; /* Larger bats */
+    opacity: 0; /* Start hidden */
+    animation: fly-across 10s linear infinite; /* Slower base speed */
+    will-change: transform; /* Optimize animation */
+    color: #111; /* Dark color for bats */
+}
+
+@keyframes fly-across {
+    0% {
+        transform: translateX(0); /* Start at the initial left position */
+        opacity: 0;
+    }
+    10%, 90% {
+        opacity: 0.7; /* Visible for most of the duration */
+    }
+    100% {
+        transform: translateX(120vw); /* Fly across the full viewport width + margin */
+        opacity: 0;
+    }
+}
+
+/* Distribute bats vertically and vary speed/delay */
+/* Slower speeds overall */
+.bat:nth-child(1) { --y-offset: 10%; animation-duration: 9s; animation-delay: 0s; }
+.bat:nth-child(2) { --y-offset: 30%; animation-duration: 11s; animation-delay: -2s; }
+.bat:nth-child(3) { --y-offset: 50%; animation-duration: 8s; animation-delay: -4s; }
+.bat:nth-child(4) { --y-offset: 70%; animation-duration: 10s; animation-delay: -1s; }
+.bat:nth-child(5) { --y-offset: 90%; animation-duration: 12s; animation-delay: -3s; }
+
+/* Adjustments for preview bats */
+.bats-preview .bat {
+    font-size: 1.2em; /* Slightly larger preview bats */
+    animation-duration: 8s; /* Slower preview flight */
+}
+.bats-preview .bat:nth-child(1) { animation-duration: 7s; }
+.bats-preview .bat:nth-child(2) { animation-duration: 7s; }
+.bats-preview .bat:nth-child(3) { animation-duration: 4s; }
+/* Removed extra closing brace below */
+
+
+@keyframes fall {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(105vh) rotate(360deg); opacity: 0; } /* Keep full fall for display page */
+}
+
+/* Snow variations */
+.snowflake:nth-of-type(1) { left: 10%; animation-duration: 12s; animation-delay: -1s; font-size: 1.2em; }
+.snowflake:nth-of-type(2) { left: 20%; animation-duration: 8s;  animation-delay: -5s; font-size: 0.8em; }
+.snowflake:nth-of-type(3) { left: 30%; animation-duration: 15s; animation-delay: -3s; font-size: 1.1em; }
+.snowflake:nth-of-type(4) { left: 40%; animation-duration: 9s;  animation-delay: -7s; font-size: 0.9em; }
+.snowflake:nth-of-type(5) { left: 50%; animation-duration: 11s; animation-delay: -2s; font-size: 1.3em; }
+.snowflake:nth-of-type(6) { left: 60%; animation-duration: 7s;  animation-delay: -6s; font-size: 0.7em; }
+.snowflake:nth-of-type(7) { left: 70%; animation-duration: 14s; animation-delay: -4s; font-size: 1.0em; }
+.snowflake:nth-of-type(8) { left: 80%; animation-duration: 10s; animation-delay: -8s; font-size: 0.8em; }
+.snowflake:nth-of-type(9) { left: 90%; animation-duration: 13s; animation-delay: -1.5s; font-size: 1.2em; }
+.snowflake:nth-of-type(10){ left: 5%;  animation-duration: 9s; animation-delay: -9s; font-size: 0.9em; }
+
+
+/* --- Responsiveness (Adjust as needed) --- */
+
+/* Landing Page Responsive */
+@media (max-width: 768px) {
+    .landing-container {
+        flex-direction: column;
+    }
+    .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #444;
+        box-sizing: border-box; /* Include padding in width */
+    }
+    .timer-grid {
+        /* Let auto-fit handle columns on smaller screens, override fixed 3 */
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+}
+
+/* Timer Display Responsive */
+@media (max-width: 600px) {
+    .timer-display-page .intro-text, /* Renamed class */
+    .timer-display-page .outro-text { /* Renamed class */
+        font-size: 1.5em;
+    }
+    .timer-display-page .time-unit span { /* Renamed class */
+        font-size: 2.5em;
+    }
+    .timer-display-page .time-unit label { /* Renamed class */
+        font-size: 1em;
+    }
+    .timer-display-page .countdown-digits { /* Renamed class */
+        gap: 10px;
+    }
+    .countdown-wrapper {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 400px) {
+     .timer-display-page .time-unit span { /* Renamed class */
+        font-size: 2em;
+    }
+     .timer-display-page .time-unit label { /* Renamed class */
+        font-size: 0.8em;
+    }
+     .timer-display-page .countdown-digits { /* Renamed class */
+        /* Keep flex-row for timer display, maybe adjust gap */
+        gap: 5px;
+    }
+}

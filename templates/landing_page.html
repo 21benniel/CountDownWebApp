@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Countdown Timer Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="landing-page-body">
+    <div class="landing-container">
+        <aside class="sidebar">
+            <h3>Create Custom Timer</h3>
+            <form action="{{ url_for('handle_custom_timer') }}" method="POST" enctype="multipart/form-data">
+                {# Form fields... #}
+                <div class="form-group"> <label for="custom-name">Name:</label> <input type="text" id="custom-name" name="name" required> </div>
+                <div class="form-group"> <label for="custom-time">Date & Time:</label> <input type="datetime-local" id="custom-time" name="time" required> </div>
+                <div class="form-group"> <label for="custom-bg">Background Image:</label> <input type="file" id="custom-bg" name="background" accept="image/*" required> </div>
+                <div class="form-group"> <button type="submit">Create & Save Timer</button> </div>
+            </form>
+        </aside>
+
+        <main class="main-content">
+            <h2>Trending Timers</h2>
+            <div class="timer-grid">
+                {% for timer_id, timer_data in trending_timers.items() %}
+                <a href="{{ url_for('show_trending_timer', timer_id=timer_id) }}"
+                   class="timer-box timer-box-preview {{ timer_data.theme }}"
+                   data-target-date="{{ timer_data.target_date }}">
+
+                    {# --- Add Animation Containers Inside Box --- #}
+                    {% if timer_data.theme == 'theme-christmas' %}
+                    <div class="snowflakes snowflakes-preview" aria-hidden="true">
+                        <div class="snowflake">❅</div> <div class="snowflake">❆</div> <div class="snowflake">❄</div>
+                    </div>
+                    {% endif %}
+                    {% if timer_data.theme == 'theme-newyear' %}
+                    <div class="fireworks fireworks-preview" aria-hidden="true">
+                        <div class="spark"></div> <div class="spark"></div> <div class="spark"></div> <div class="spark"></div> <div class="spark"></div>
+                    </div>
+                    {% endif %}
+                    {% if timer_data.theme == 'theme-halloween' %}
+                    <div class="bats bats-preview" aria-hidden="true">
+                         {# Fewer bats for preview #}
+                        <div class="bat">🦇</div> <div class="bat">🦇</div> <div class="bat">🦇</div>
+                    </div>
+                    {% endif %}
+                    {# --- End Animation Containers --- #}
+
+                    <div class="timer-box-content"> {# Wrap content to ensure it's above animation #}
+                        <div class="timer-box-name">{{ timer_data.name }}</div>
+                        <div class="preview-countdown">
+                            <span class="preview-days">--</span>d
+                            <span class="preview-hours">--</span>h
+                            <span class="preview-minutes">--</span>m
+                            <span class="preview-seconds">--</span>s
+                        </div>
+                    </div>
+                </a>
+                {% else %}
+                <p>No trending timers available.</p>
+                {% endfor %}
+            </div>
+
+            <h2 style="margin-top: 40px;">My Custom Timers</h2>
+            <div class="timer-grid">
+                {% for timer in custom_timers %}
+                <a href="{{ url_for('show_custom_timer', custom_timer_id=timer.id) }}"
+                   class="timer-box timer-box-preview theme-custom"
+                   data-target-date="{{ timer.target_date }}">
+                   <div class="timer-box-content"> {# Wrap content #}
+                        <div class="timer-box-name">{{ timer.name }}</div>
+                        <div class="preview-countdown">
+                            <span class="preview-days">--</span>d
+                            <span class="preview-hours">--</span>h
+                            <span class="preview-minutes">--</span>m
+                            <span class="preview-seconds">--</span>s
+                        </div>
+                    </div>
+                </a>
+                {% else %}
+                <p>You haven't created any custom timers yet.</p>
+                {% endfor %}
+            </div>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

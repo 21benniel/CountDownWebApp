@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Christmas Countdown</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- Consider adding a font link here if needed, e.g., Google Fonts -->
+</head>
+<body>
+    <!-- Snow Container -->
+    <div class="snowflakes" aria-hidden="true">
+        <!-- Snowflakes will be added here dynamically or via CSS pseudo-elements -->
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+        <div class="snowflake">❄</div>
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+        <div class="snowflake">❄</div>
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+        <div class="snowflake">❄</div>
+    </div>
+
+    <div class="countdown-wrapper">
+        <p class="intro-text">There are only</p>
+        <div id="countdown" class="countdown-digits">
+            <div class="time-unit">
+                <span id="days">00</span>
+                <label>days</label>
+            </div>
+            <div class="time-unit">
+                <span id="hours">00</span>
+                <label>hours</label>
+            </div>
+            <div class="time-unit">
+                <span id="minutes">00</span>
+                <label>mins</label>
+            </div>
+            <div class="time-unit">
+                <span id="seconds">00</span>
+                <label>secs</label>
+            </div>
+        </div>
+        <p class="outro-text">until Christmas!</p>
+        <!-- Optional: Link from image -->
+        <!-- <p class="footer-link"><a href="http://www.xmasclock.com">www.xmasclock.com</a></p> -->
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

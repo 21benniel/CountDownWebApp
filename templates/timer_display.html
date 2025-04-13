@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ timer_name }} - Countdown</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body
+    class="timer-display-page {{ background_style if background_style and not background_style.startswith('/') else '' }}"
+    {% if background_style and background_style.startswith('/') %}
+        style="background-image: url('{{ background_style }}'); background-size: cover; background-position: center; background-repeat: no-repeat;"
+    {% endif %}
+>
+
+    {# --- Theme Specific Animations --- #}
+    {% if background_style == 'theme-christmas' %}
+    <div class="snowflakes" aria-hidden="true">
+        <div class="snowflake">❅</div> <div class="snowflake">❅</div> <div class="snowflake">❆</div> <div class="snowflake">❄</div> <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div> <div class="snowflake">❄</div> <div class="snowflake">❅</div> <div class="snowflake">❆</div> <div class="snowflake">❄</div>
+    </div>
+    {% endif %}
+
+    {% if background_style == 'theme-newyear' %}
+    <div class="fireworks" aria-hidden="true">
+        <div class="spark"></div> <div class="spark"></div> <div class="spark"></div> <div class="spark"></div> <div class="spark"></div>
+        <div class="spark"></div> <div class="spark"></div> <div class="spark"></div> <div class="spark"></div> <div class="spark"></div>
+    </div>
+    {% endif %}
+
+    {% if background_style == 'theme-halloween' %}
+    <div class="bats" aria-hidden="true">
+        {# Using emoji for simplicity #}
+        <div class="bat">🦇</div> <div class="bat">🦇</div> <div class="bat">🦇</div> <div class="bat">🦇</div> <div class="bat">🦇</div>
+    </div>
+    {% endif %}
+
+
+    <div class="countdown-wrapper">
+        <p class="intro-text">{{ timer_name }}</p>
+        <div id="countdown" class="countdown-digits" data-target-date="{{ target_date_iso }}">
+            <div class="time-unit"> <span id="days">--</span> <label>days</label> </div>
+            <div class="time-unit"> <span id="hours">--</span> <label>hours</label> </div>
+            <div class="time-unit"> <span id="minutes">--</span> <label>mins</label> </div>
+            <div class="time-unit"> <span id="seconds">--</span> <label>secs</label> </div>
+        </div>
+        <p class="outro-text">remaining!</p>
+         <p class="back-link"><a href="{{ url_for('landing_page') }}">&laquo; Back to Dashboard</a></p>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
