@@ -2,21 +2,35 @@ import os
 import uuid
 import calendar
 from datetime import datetime, timedelta, time
-from flask import Flask, render_template, request, redirect, url_for, send_from_directory, abort, session
+from flask import Flask, render_template, request, redirect, url_for, abort, session, flash # Removed send_from_directory
 from werkzeug.utils import secure_filename
+from google.cloud import storage # Import GCS client library
 
 app = Flask(__name__)
 
 # --- Configuration ---
-UPLOAD_FOLDER = 'uploads'
+# UPLOAD_FOLDER = 'uploads' # No longer needed
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-# **REQUIRED for sessions** - replace with a real secret key in production
-app.secret_key = os.urandom(24) # Generates a random key each time server starts
+# app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER # No longer needed
+# Set max upload size (e.g., 5MB) - Adjust as needed
+app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024
+# **REQUIRED for sessions** - Use environment variable for production secret key
+# For local dev, os.urandom is okay, but sessions won't persist restarts.
+# Use a consistent fallback for dev if needed, or require FLASK_SECRET_KEY
+_default_secret = os.urandom(24)
+app.secret_key = os.environ.get('FLASK_SECRET_KEY', _default_secret)
+if app.secret_key == _default_secret:
+     print("WARNING: FLASK_SECRET_KEY environment variable not set. Using temporary key - sessions will not persist across restarts.")
 
-# --- Create Upload Directory ---
-if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
+# --- Cloud Storage Configuration ---
+# Replace with your actual bucket name
+GCS_BUCKET_NAME = os.environ.get('GCS_BUCKET_NAME', 'gen-lang-client-0771034591-backgrounds')
+storage_client = storage.Client() # Initialize GCS client
+bucket = storage_client.bucket(GCS_BUCKET_NAME)
+
+# --- Create Upload Directory (No longer needed) ---
+# if not os.path.exists(UPLOAD_FOLDER):
+#     os.makedirs(UPLOAD_FOLDER)
 
 # --- Helper Function ---
 def allowed_file(filename):
@@ -107,23 +121,42 @@ def show_trending_timer(timer_id):
 @app.route('/timer/custom', methods=['POST'])
 def handle_custom_timer():
     """Handles the submission of the custom timer form and saves to session."""
+    # --- Check Custom Timer Limit ---
+    custom_timers_list = session.get('custom_timers', [])
+    if len(custom_timers_list) >= 2:
+        flash("You can only save a maximum of 2 custom timers.", "error") # Add category 'error'
+        return redirect(url_for('landing_page'))
+    # --- End Check ---
+
     if 'background' not in request.files:
-        return "No background image part in form", 400
+        flash("No background image selected.", "error")
+        return redirect(url_for('landing_page')) # Redirect instead of plain text error
+
     file = request.files['background']
-    timer_name = request.form.get('name', 'Custom Timer')
+    timer_name = request.form.get('name', 'Custom Timer').strip() # Add strip()
     target_time_str = request.form.get('time')
 
+    # --- Add Name Length Check ---
+    MAX_NAME_LENGTH = 100
+    if not timer_name or len(timer_name) > MAX_NAME_LENGTH:
+        flash(f"Timer name must be between 1 and {MAX_NAME_LENGTH} characters.", "error")
+        return redirect(url_for('landing_page'))
+    # --- End Check ---
+
     if not target_time_str:
-         return "No target time provided", 400
+         flash("No target date/time provided.", "error")
+         return redirect(url_for('landing_page'))
 
     try:
         target_dt = datetime.strptime(target_time_str, '%Y-%m-%dT%H:%M')
         target_date_iso = target_dt.strftime('%Y-%m-%d %H:%M:%S')
     except ValueError:
-        return "Invalid date/time format submitted", 400
+        flash("Invalid date/time format submitted.", "error")
+        return redirect(url_for('landing_page'))
 
     if file.filename == '':
-        return "No selected file", 400
+        flash("No background image file selected.", "error")
+        return redirect(url_for('landing_page'))
 
     if file and allowed_file(file.filename):
         original_ext = file.filename.rsplit('.', 1)[1].lower()
@@ -131,12 +164,20 @@ def handle_custom_timer():
         timer_id = str(uuid.uuid4())
         unique_filename = timer_id + '.' + original_ext # Use timer ID in filename
         secure_name = secure_filename(unique_filename)
-        filepath = os.path.join(app.config['UPLOAD_FOLDER'], secure_name)
+        # filepath = os.path.join(app.config['UPLOAD_FOLDER'], secure_name) # No longer save locally
         try:
-            file.save(filepath)
+            # Upload to GCS
+            blob = bucket.blob(secure_name)
+            # Rewind file pointer after reading filename/extension
+            file.seek(0)
+            # Upload the file stream
+            blob.upload_from_file(file, content_type=file.content_type)
+            # Make the blob publicly readable (alternative to setting bucket-level permissions)
+            # blob.make_public() # Uncomment if bucket isn't already public
 
-            # Get existing custom timers from session or initialize empty list
-            custom_timers_list = session.get('custom_timers', [])
+            # file.save(filepath) # Removed local save
+
+            # custom_timers_list is already retrieved above for the check
 
             # Add new timer details to the list
             new_timer = {
@@ -156,9 +197,11 @@ def handle_custom_timer():
 
         except Exception as e:
             print(f"Error saving file or session: {e}")
-            return "Error processing custom timer", 500
+            flash("Error processing custom timer. Please try again.", "error")
+            return redirect(url_for('landing_page'))
     else:
-        return "File type not allowed", 400
+        flash("Invalid file type for background image. Allowed types: png, jpg, jpeg, gif", "error")
+        return redirect(url_for('landing_page'))
 
 # New route to display a specific custom timer from session
 @app.route('/timer/custom/<custom_timer_id>')
@@ -175,11 +218,17 @@ def show_custom_timer(custom_timer_id):
         # Timer not found in session (maybe expired or invalid ID)
         # Redirect to landing page with a message? Or show 404?
         # For now, redirecting to landing page.
-        # flash("Custom timer not found.") # Requires flash import and handling in template
+        flash("Custom timer not found.", "error")
         return redirect(url_for('landing_page'))
 
-    # Construct the URL for the background image
-    background_image_url = url_for('uploaded_file', filename=timer_data['bg_filename'])
+    # Construct the Public URL for the GCS object
+    # Option 1: If bucket is public (using make_public() or allUsers permission)
+    background_image_url = f"https://storage.googleapis.com/{GCS_BUCKET_NAME}/{timer_data['bg_filename']}"
+    # Option 2: Generate a signed URL (more secure, requires more setup/permissions)
+    # blob = bucket.blob(timer_data['bg_filename'])
+    # background_image_url = blob.generate_signed_url(version="v4", expiration=timedelta(minutes=15), method="GET")
+
+    # background_image_url = url_for('uploaded_file', filename=timer_data['bg_filename']) # Removed old route call
 
     return render_template(
         'timer_display.html',
@@ -188,14 +237,17 @@ def show_custom_timer(custom_timer_id):
         background_style=background_image_url # Pass image URL
     )
 
-
-@app.route('/uploads/<filename>')
-def uploaded_file(filename):
-    """Serves files uploaded by users."""
-    try:
-        return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
-    except FileNotFoundError:
-        abort(404)
+# Removed the local file serving route
+# @app.route('/uploads/<filename>')
+# def uploaded_file(filename):
+#     """Serves files uploaded by users."""
+#     try:
+#         return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+#     except FileNotFoundError:
+#         abort(404)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    # Disable debug mode for production simulation or when not needed
+    # Use environment variable to control debug mode (e.g., FLASK_DEBUG=1)
+    is_debug = os.environ.get('FLASK_DEBUG', '0') == '1'
+    app.run(host='0.0.0.0', port=5000, debug=is_debug)
