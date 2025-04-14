@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Countdown Timer Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        /* Basic styling for flash messages */
+        .flash-messages { list-style: none; padding: 0; margin: 0 0 20px 0; }
+        .flash-messages li { padding: 10px 15px; margin-bottom: 10px; border-radius: 4px; }
+        .flash-messages .error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .flash-messages .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        /* .share-link { font-size: 0.8em; margin-top: 10px; display: block; } Removed */
+    </style>
 </head>
 <body class="landing-page-body">
     <div class="landing-container">
@@ -20,62 +28,51 @@
         </aside>
 
         <main class="main-content">
+
+            {# --- Display Flashed Messages --- #}
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <ul class="flash-messages">
+                    {% for category, message in messages %}
+                        <li class="{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
+            {# --- End Flashed Messages --- #}
+
+
             <h2>Trending Timers</h2>
             <div class="timer-grid">
                 {% for timer_id, timer_data in trending_timers.items() %}
                 <a href="{{ url_for('show_trending_timer', timer_id=timer_id) }}"
                    class="timer-box timer-box-preview {{ timer_data.theme }}"
                    data-target-date="{{ timer_data.target_date }}">
-
-                    {# --- Add Animation Containers Inside Box --- #}
-                    {% if timer_data.theme == 'theme-christmas' %}
-                    <div class="snowflakes snowflakes-preview" aria-hidden="true">
-                        <div class="snowflake">❅</div> <div class="snowflake">❆</div> <div class="snowflake">❄</div>
-                    </div>
-                    {% endif %}
-                    {% if timer_data.theme == 'theme-newyear' %}
-                    <div class="fireworks fireworks-preview" aria-hidden="true">
-                        <div class="spark"></div> <div class="spark"></div> <div class="spark"></div> <div class="spark"></div> <div class="spark"></div>
-                    </div>
-                    {% endif %}
-                    {% if timer_data.theme == 'theme-halloween' %}
-                    <div class="bats bats-preview" aria-hidden="true">
-                         {# Fewer bats for preview #}
-                        <div class="bat">🦇</div> <div class="bat">🦇</div> <div class="bat">🦇</div>
-                    </div>
-                    {% endif %}
-                    {# --- End Animation Containers --- #}
-
-                    <div class="timer-box-content"> {# Wrap content to ensure it's above animation #}
+                    {# Animation Containers #}
+                    {% if timer_data.theme == 'theme-christmas' %} <div class="snowflakes snowflakes-preview" aria-hidden="true"> <div class="snowflake">❅</div> <div class="snowflake">❆</div> <div class="snowflake">❄</div> </div> {% endif %}
+                    {% if timer_data.theme == 'theme-newyear' %} <div class="fireworks fireworks-preview" aria-hidden="true"> <div class="spark"></div> <div class="spark"></div> <div class="spark"></div> <div class="spark"></div> <div class="spark"></div> </div> {% endif %}
+                    {% if timer_data.theme == 'theme-halloween' %} <div class="bats bats-preview" aria-hidden="true"> <div class="bat">🦇</div> <div class="bat">🦇</div> <div class="bat">🦇</div> </div> {% endif %}
+                    {# Content #}
+                    <div class="timer-box-content">
                         <div class="timer-box-name">{{ timer_data.name }}</div>
-                        <div class="preview-countdown">
-                            <span class="preview-days">--</span>d
-                            <span class="preview-hours">--</span>h
-                            <span class="preview-minutes">--</span>m
-                            <span class="preview-seconds">--</span>s
-                        </div>
+                        <div class="preview-countdown"> <span class="preview-days">--</span>d <span class="preview-hours">--</span>h <span class="preview-minutes">--</span>m <span class="preview-seconds">--</span>s </div>
                     </div>
                 </a>
-                {% else %}
-                <p>No trending timers available.</p>
-                {% endfor %}
+                {% else %} <p>No trending timers available.</p> {% endfor %}
             </div>
 
             <h2 style="margin-top: 40px;">My Custom Timers</h2>
             <div class="timer-grid">
                 {% for timer in custom_timers %}
+                {# Reverted to simple link for the whole box #}
                 <a href="{{ url_for('show_custom_timer', custom_timer_id=timer.id) }}"
                    class="timer-box timer-box-preview theme-custom"
                    data-target-date="{{ timer.target_date }}">
-                   <div class="timer-box-content"> {# Wrap content #}
+                   <div class="timer-box-content">
                         <div class="timer-box-name">{{ timer.name }}</div>
-                        <div class="preview-countdown">
-                            <span class="preview-days">--</span>d
-                            <span class="preview-hours">--</span>h
-                            <span class="preview-minutes">--</span>m
-                            <span class="preview-seconds">--</span>s
-                        </div>
-                    </div>
+                        <div class="preview-countdown"> <span class="preview-days">--</span>d <span class="preview-hours">--</span>h <span class="preview-minutes">--</span>m <span class="preview-seconds">--</span>s </div>
+                        {# Removed View/Share links #}
+                   </div>
                 </a>
                 {% else %}
                 <p>You haven't created any custom timers yet.</p>

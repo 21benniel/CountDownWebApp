@@ -5,6 +5,7 @@ from datetime import datetime, timedelta, time
 from flask import Flask, render_template, request, redirect, url_for, abort, session, flash # Removed send_from_directory
 from werkzeug.utils import secure_filename
 from google.cloud import storage # Import GCS client library
+# from google.cloud import firestore # Removed Firestore import
 
 app = Flask(__name__)
 
@@ -27,6 +28,16 @@ if app.secret_key == _default_secret:
 GCS_BUCKET_NAME = os.environ.get('GCS_BUCKET_NAME', 'gen-lang-client-0771034591-backgrounds')
 storage_client = storage.Client() # Initialize GCS client
 bucket = storage_client.bucket(GCS_BUCKET_NAME)
+
+# --- Firestore Configuration (Removed) ---
+# try:
+#     db = firestore.Client() # Initialize Firestore client
+#     # Define the collection name
+#     CUSTOM_TIMERS_COLLECTION = 'custom_timers'
+# except Exception as e:
+#     print(f"ERROR: Failed to initialize Firestore client: {e}")
+#     # Handle initialization error appropriately - maybe exit or disable custom timers
+#     db = None # Set db to None if initialization fails
 
 # --- Create Upload Directory (No longer needed) ---
 # if not os.path.exists(UPLOAD_FOLDER):
@@ -81,7 +92,7 @@ def landing_page():
     }
 
     all_trending_timers = {**static_trending_timers, **dynamic_timers}
-    # Get custom timers from session
+    # Get custom timers from session (Reverted)
     custom_timers_list = session.get('custom_timers', [])
 
     return render_template(
@@ -121,11 +132,12 @@ def show_trending_timer(timer_id):
 @app.route('/timer/custom', methods=['POST'])
 def handle_custom_timer():
     """Handles the submission of the custom timer form and saves to session."""
-    # --- Check Custom Timer Limit ---
+    # --- Check Custom Timer Limit (Reverted to session check) ---
     custom_timers_list = session.get('custom_timers', [])
     if len(custom_timers_list) >= 2:
-        flash("You can only save a maximum of 2 custom timers.", "error") # Add category 'error'
+        flash("You can only save a maximum of 2 custom timers.", "error")
         return redirect(url_for('landing_page'))
+    # --- End Check ---
     # --- End Check ---
 
     if 'background' not in request.files:
@@ -179,7 +191,7 @@ def handle_custom_timer():
 
             # custom_timers_list is already retrieved above for the check
 
-            # Add new timer details to the list
+            # Add new timer details to the list (Reverted to session storage)
             new_timer = {
                 'id': timer_id,
                 'name': timer_name,
@@ -206,7 +218,8 @@ def handle_custom_timer():
 # New route to display a specific custom timer from session
 @app.route('/timer/custom/<custom_timer_id>')
 def show_custom_timer(custom_timer_id):
-    """Displays a specific custom timer stored in the session."""
+    """Displays a specific custom timer stored in the session.""" # Docstring updated
+    # Fetch from session (Reverted)
     custom_timers_list = session.get('custom_timers', [])
     timer_data = None
     for timer in custom_timers_list:
