@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ timer_name }} - Countdown</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    {# --- AdSense Script --- #}
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9561947305994926"
+     crossorigin="anonymous"></script>
+    {# --- End AdSense Script --- #}
+    <style>
+        /* Basic style for ad placeholder on display page */
+        .ad-placeholder-bottom { padding: 20px; text-align: center; color: #888; font-size: 0.9em; position: relative; z-index: 15; /* Ensure it's above background but below potential modals */ }
+    </style>
 </head>
 <body
     class="timer-display-page {{ background_style if background_style and not background_style.startswith('/') else '' }}"
@@ -20,17 +28,14 @@
         <div class="snowflake">❆</div> <div class="snowflake">❄</div> <div class="snowflake">❅</div> <div class="snowflake">❆</div> <div class="snowflake">❄</div>
     </div>
     {% endif %}
-
     {% if background_style == 'theme-newyear' %}
     <div class="fireworks" aria-hidden="true">
         <div class="spark"></div> <div class="spark"></div> <div class="spark"></div> <div class="spark"></div> <div class="spark"></div>
         <div class="spark"></div> <div class="spark"></div> <div class="spark"></div> <div class="spark"></div> <div class="spark"></div>
     </div>
     {% endif %}
-
     {% if background_style == 'theme-halloween' %}
     <div class="bats" aria-hidden="true">
-        {# Using emoji for simplicity #}
         <div class="bat">🦇</div> <div class="bat">🦇</div> <div class="bat">🦇</div> <div class="bat">🦇</div> <div class="bat">🦇</div>
     </div>
     {% endif %}
@@ -49,5 +54,13 @@
     </div>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
+
+    {# --- Ad Placeholder --- #}
+    <div class="ad-placeholder-bottom">
+        <p>Advertisement</p>
+        <!-- Paste AdSense Ad Unit Code Block Here (Bottom of Display Page) -->
+    </div>
+    {# --- End Ad Placeholder --- #}
+
 </body>
 </html>
