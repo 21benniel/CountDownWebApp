@@ -600,6 +600,40 @@ h2, h3 {
     .timer-display-page .time-unit label { /* Renamed class */
         font-size: 1em;
     }
+    
+    /* Timer Display Responsive */
+    @media (max-width: 600px) {
+        .timer-display-page .intro-text, /* Renamed class */
+        .timer-display-page .outro-text { /* Renamed class */
+            font-size: 1.5em;
+        }
+        .timer-display-page .time-unit span { /* Renamed class */
+            font-size: 2.5em;
+        }
+        .timer-display-page .time-unit label { /* Renamed class */
+            font-size: 1em;
+        }
+        .timer-display-page .countdown-digits { /* Renamed class */
+            gap: 10px;
+        }
+        .countdown-wrapper {
+            padding: 20px;
+        }
+    }
+    
+    @media (max-width: 400px) {
+         .timer-display-page .time-unit span { /* Renamed class */
+            font-size: 2em;
+        }
+         .timer-display-page .time-unit label { /* Renamed class */
+            font-size: 0.8em;
+        }
+         .timer-display-page .countdown-digits { /* Renamed class */
+            /* Keep flex-row for timer display, maybe adjust gap */
+            gap: 5px;
+            transform: skew(-10deg);
+        }
+    }
     .timer-display-page .countdown-digits { /* Renamed class */
         gap: 10px;
     }
